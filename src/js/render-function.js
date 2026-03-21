@@ -56,3 +56,6 @@ export function showNotFound() {
 export function hideNotFound() {
   refs.notFound.classList.remove('not-found--visible');
 }
+export function clearProductList() {
+  refs.products.innerHTML = "";
+}

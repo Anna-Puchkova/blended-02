@@ -1,3 +1,4 @@
+import iziToast from "izitoast";
 export function showToast(message, type = 'success') {
   const options = {
     message,

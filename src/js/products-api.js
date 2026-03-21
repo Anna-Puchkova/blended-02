@@ -14,3 +14,10 @@ export async function getProducts(currentPage) {
   );
   return data;
 }
+
+// https://dummyjson.com/products/category/smartphones
+export async function getProductsByCategory(category, currentPage) {
+   const skip = (currentPage - 1) * 12;
+  const {data} = await axios(`${API_ENDPOINTS.BYECATEGORY}${category}?limit=${ITEMS_PER_PAGE}&skip=${skip}`);
+  return data;
+}
