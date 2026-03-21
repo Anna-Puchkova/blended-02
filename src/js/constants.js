@@ -4,5 +4,6 @@ export const API_ENDPOINTS = {
   PRODUCTS: '/products',
   BYECATEGORY: `products/category/`,
   ID: '/',
+  FOUNDPRODUCTS: '/products/search',
 };
 export const ITEMS_PER_PAGE = 12;

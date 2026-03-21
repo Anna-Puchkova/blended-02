@@ -29,3 +29,11 @@ export async function getProductInModal(id) {
   const { data } = await axios(`${API_ENDPOINTS.PRODUCTS}/${id}`);
   return data;
 }
+// https://dummyjson.com/products/search?q=nail 
+export async function getProductBySearch(value, currentPage) {
+  const skip = (currentPage - 1) * 12;
+  const { data } = await axios(`${API_ENDPOINTS.FOUNDPRODUCTS}?q=${value}&limit=${ITEMS_PER_PAGE}&skip=${skip}`
+  );
+  
+  return data;
+}
