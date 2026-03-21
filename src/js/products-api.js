@@ -17,7 +17,15 @@ export async function getProducts(currentPage) {
 
 // https://dummyjson.com/products/category/smartphones
 export async function getProductsByCategory(category, currentPage) {
-   const skip = (currentPage - 1) * 12;
-  const {data} = await axios(`${API_ENDPOINTS.BYECATEGORY}${category}?limit=${ITEMS_PER_PAGE}&skip=${skip}`);
+  const skip = (currentPage - 1) * 12;
+  const { data } = await axios(
+    `${API_ENDPOINTS.BYECATEGORY}${category}?limit=${ITEMS_PER_PAGE}&skip=${skip}`
+  );
+  return data;
+}
+
+// https://dummyjson.com/products/1
+export async function getProductInModal(id) {
+  const { data } = await axios(`${API_ENDPOINTS.PRODUCTS}/${id}`);
   return data;
 }

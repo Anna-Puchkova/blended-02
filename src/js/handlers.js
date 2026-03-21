@@ -1,4 +1,9 @@
-import { getCategories, getProducts, getProductsByCategory } from './products-api';
+import {
+  getCategories,
+  getProductInModal,
+  getProducts,
+  getProductsByCategory,
+} from './products-api';
 import { showToast } from './helpers';
 import {
   hideLoader,
@@ -10,20 +15,26 @@ import {
   showLoadMoreBtn,
   showNotFound,
   clearProductList,
+  renderModal,
+  showModal,
 } from './render-function';
+import { refs } from './refs';
+import { closeModal, closeModalEsc } from './modal';
 
 let currentPage = 1;
-let category = "";
+let category = '';
 export async function initHomePage() {
   try {
-        currentPage = 1;
+    currentPage = 1;
     hideNotFound();
     hideLoadMoreBtn();
     showLoader();
     const categories = await getCategories();
     const allCategories = ['all', ...categories];
     renderCategories(allCategories);
-    document.querySelector(`.categories__btn`).classList.add(`categories__btn--active`);
+    document
+      .querySelector(`.categories__btn`)
+      .classList.add(`categories__btn--active`);
     const { products, skip, total } = await getProducts(currentPage);
     if (products.length === 0) {
       showNotFound();
@@ -46,28 +57,30 @@ export async function handlerLoadMore() {
     hideNotFound();
     hideLoadMoreBtn();
     showLoader();
-    if (category === "") {
+    if (category === '') {
       const { products, skip, total } = await getProducts(currentPage);
-          if (products.length === 0) {
-      showNotFound();
-      return;
-    }
-    renderProducts(products);
-    if (total - (skip + 12) > 0) {
-      showLoadMoreBtn();
-    }
+      if (products.length === 0) {
+        showNotFound();
+        return;
+      }
+      renderProducts(products);
+      if (total - (skip + 12) > 0) {
+        showLoadMoreBtn();
+      }
     } else {
-          const {products, skip, total} = await getProductsByCategory(category, currentPage);
-              if (products.length === 0) {
-      showNotFound();
-      return;
+      const { products, skip, total } = await getProductsByCategory(
+        category,
+        currentPage
+      );
+      if (products.length === 0) {
+        showNotFound();
+        return;
+      }
+      renderProducts(products);
+      if (total - (skip + 12) > 0) {
+        showLoadMoreBtn();
+      }
     }
-    renderProducts(products);
-    if (total - (skip + 12) > 0) {
-      showLoadMoreBtn();
-    }
-    }
-
   } catch (error) {
     showToast('smth wrong,try again, pls', 'error');
   } finally {
@@ -76,46 +89,60 @@ export async function handlerLoadMore() {
 }
 
 export async function handleCategory(e) {
-  
   if (e.target.nodeName !== `BUTTON`) return;
- category = e.target.dataset.category;
- document.querySelectorAll(`.categories__btn`).forEach(item => {
-  item.classList.remove('categories__btn--active');
- })
- e.target.classList.add(`categories__btn--active`);
-  try{
-
+  category = e.target.dataset.category;
+  document.querySelectorAll(`.categories__btn`).forEach(item => {
+    item.classList.remove('categories__btn--active');
+  });
+  e.target.classList.add(`categories__btn--active`);
+  try {
     currentPage = 1;
-        clearProductList();
+    clearProductList();
     hideNotFound();
     hideLoadMoreBtn();
     showLoader();
-    if (category === "all") {
+    if (category === 'all') {
       const { products, skip, total } = await getProducts(currentPage);
-          if (products.length === 0) {
-      showNotFound();
-      return;
-    }
-    renderProducts(products);
-    if (total - (skip + 12) > 0) {
-      showLoadMoreBtn();
-    }
+      if (products.length === 0) {
+        showNotFound();
+        return;
+      }
+      renderProducts(products);
+      if (total - (skip + 12) > 0) {
+        showLoadMoreBtn();
+      }
     } else {
-          const {products, skip, total} = await getProductsByCategory(category, currentPage);
-              if (products.length === 0) {
-      showNotFound();
-      return;
+      const { products, skip, total } = await getProductsByCategory(
+        category,
+        currentPage
+      );
+      if (products.length === 0) {
+        showNotFound();
+        return;
+      }
+      renderProducts(products);
+      if (total - (skip + 12) > 0) {
+        showLoadMoreBtn();
+      }
     }
-    renderProducts(products);
-    if (total - (skip + 12) > 0) {
-      showLoadMoreBtn();
-    }
-    }
-
-   
-  }  catch (error) {
+  } catch (error) {
     showToast('smth wrong,try again, pls', 'error');
   } finally {
     hideLoader();
   }
-} 
+}
+
+export async function handlerModal(e) {
+  const id = e.target.closest('li').dataset.id;
+  try {
+    const modal = await getProductInModal(id);
+    renderModal(modal);
+    showModal();
+    refs.modal.addEventListener('click', closeModal);
+    document.addEventListener('keydown', closeModalEsc);
+  } catch (error) {
+    showToast('smth wrong,try again, pls', 'error');
+  } finally {
+    hideLoader();
+  }
+}
