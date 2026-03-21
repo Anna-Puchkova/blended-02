@@ -161,7 +161,7 @@ export async function handlerModal(e) {
 }
 export async function handlerForm(e) {
   e.preventDefault();
-  if (e.target.value === ''|| e.target.value === undefined) {
+  if (e.target.elements.searchValue.value.trim() === ''|| e.target.elements.searchValue.value === undefined) {
     return;
   }
   try {
