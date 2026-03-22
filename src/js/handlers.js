@@ -21,6 +21,8 @@ import {
 } from './render-function';
 import { refs } from './refs';
 import { closeModal, closeModalEsc } from './modal';
+import { handlerCartBtn } from '../cart';
+import { getLocalStorage } from './storage';
 
 let currentPage = 1;
 let category = '';
@@ -59,7 +61,10 @@ export async function handlerLoadMore() {
     hideLoadMoreBtn();
     showLoader();
     if (searchValue !== '') {
-      const { products, skip, total } = await getProductBySearch(searchValue, currentPage);
+      const { products, skip, total } = await getProductBySearch(
+        searchValue,
+        currentPage
+      );
       if (products.length === 0) {
         showNotFound();
         return;
@@ -68,8 +73,7 @@ export async function handlerLoadMore() {
       if (total - (skip + 12) > 0) {
         showLoadMoreBtn();
       }
-    } else 
-    if (category === '') {
+    } else if (category === '') {
       const { products, skip, total } = await getProducts(currentPage);
       if (products.length === 0) {
         showNotFound();
@@ -151,8 +155,14 @@ export async function handlerModal(e) {
     const modal = await getProductInModal(id);
     renderModal(modal);
     showModal();
-    refs.modal.addEventListener('click', closeModal);
+
     document.addEventListener('keydown', closeModalEsc);
+
+    if (getLocalStorage().includes(id)) {
+      refs.cartBtn.textContent = 'Remove from Cart';
+    } else {
+      refs.cartBtn.textContent = 'Add to cart';
+    }
   } catch (error) {
     showToast('smth wrong,try again, pls', 'error');
   } finally {
@@ -161,20 +171,26 @@ export async function handlerModal(e) {
 }
 export async function handlerForm(e) {
   e.preventDefault();
-  if (e.target.elements.searchValue.value.trim() === ''|| e.target.elements.searchValue.value === undefined) {
+  if (
+    e.target.elements.searchValue.value.trim() === '' ||
+    e.target.elements.searchValue.value === undefined
+  ) {
     return;
   }
   try {
     const formData = new FormData(e.target);
     const value = formData.get('searchValue').trim();
-  searchValue = value;
+    searchValue = value;
     currentPage = 1;
     clearProductList();
     hideNotFound();
     hideLoadMoreBtn();
     showLoader();
     if (value !== '') {
-      const { products, skip, total } = await getProductBySearch(value,currentPage);
+      const { products, skip, total } = await getProductBySearch(
+        value,
+        currentPage
+      );
       if (products.length === 0) {
         showNotFound();
         return;
@@ -197,13 +213,15 @@ export async function clearSearch(e) {
   document.querySelectorAll(`.categories__btn`).forEach(item => {
     item.classList.remove('categories__btn--active');
   });
-  document.querySelector(`.categories__btn`).classList.add(`categories__btn--active`);
+  document
+    .querySelector(`.categories__btn`)
+    .classList.add(`categories__btn--active`);
   currentPage = 1;
-    hideNotFound();
-    hideLoadMoreBtn();
-    showLoader();
+  hideNotFound();
+  hideLoadMoreBtn();
+  showLoader();
   try {
-  const { products, skip, total } = await getProducts(currentPage);
+    const { products, skip, total } = await getProducts(currentPage);
     if (products.length === 0) {
       showNotFound();
       return;

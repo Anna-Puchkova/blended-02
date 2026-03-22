@@ -68,9 +68,10 @@ export function renderModal({
   shippingInformation,
   returnPolicy,
   price,
+  id,
 }) {
   const markup = `<img class="modal-product__img" src="${thumbnail}" alt="${title}" />
-      <div class="modal-product__content">
+      <div class="modal-product__content"'>
         <p class="modal-product__title">${title}</p>
         <ul class="modal-product__tags">${tags}</ul>
         <p class="modal-product__description">${description}</p>
@@ -79,6 +80,7 @@ export function renderModal({
         <p class="modal-product__price">Price:${price} $</p>
         <button class="modal-product__buy-btn" type="button">Buy</button>
       </div>`;
+  refs.modalProduct.dataset.id = id;
   refs.modalProduct.insertAdjacentHTML('beforeend', markup);
 }
 
