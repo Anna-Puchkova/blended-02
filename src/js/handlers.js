@@ -21,8 +21,14 @@ import {
 } from './render-function';
 import { refs } from './refs';
 import { closeModal, closeModalEsc } from './modal';
-import { handlerCartBtn } from '../cart';
-import { getLocalStorage } from './storage';
+import {
+  addLocalStorage,
+  addLocalStorageWishlist,
+  getLocalStorage,
+  getLocalStorageWishlist,
+  removeLocalStorage,
+  removeLocalStorageWishlist,
+} from './storage';
 
 let currentPage = 1;
 let category = '';
@@ -161,7 +167,13 @@ export async function handlerModal(e) {
     if (getLocalStorage().includes(id)) {
       refs.cartBtn.textContent = 'Remove from Cart';
     } else {
-      refs.cartBtn.textContent = 'Add to cart';
+      refs.cartBtn.textContent = 'Add to Cart';
+    }
+
+    if (getLocalStorageWishlist().includes(id)) {
+      refs.wishlistBtn.textContent = 'Remove from Wishlist';
+    } else {
+      refs.wishlistBtn.textContent = 'Add to Wishlist';
     }
   } catch (error) {
     showToast('smth wrong,try again, pls', 'error');
@@ -169,6 +181,7 @@ export async function handlerModal(e) {
     hideLoader();
   }
 }
+
 export async function handlerForm(e) {
   e.preventDefault();
   if (
@@ -207,6 +220,7 @@ export async function handlerForm(e) {
     hideLoader();
   }
 }
+
 export async function clearSearch(e) {
   refs.form.reset();
   refs.products.innerHTML = '';
@@ -235,4 +249,86 @@ export async function clearSearch(e) {
   } finally {
     hideLoader();
   }
+}
+
+//Логіка сторінки Cart
+export async function handlerCartBtn() {
+  const id = refs.modalProduct.dataset.id;
+
+  if (getLocalStorage().includes(id)) {
+    removeLocalStorage(id);
+    refs.cartBtn.textContent = 'Add to Cart';
+  } else {
+    addLocalStorage(id);
+    refs.cartBtn.textContent = 'Remove from Cart';
+  }
+  refs.cartCount.textContent = getLocalStorage().length;
+  reTextOrederItemsCount();
+  reTextTotalPrice();
+}
+
+export async function initCart() {
+  if (!refs.cartNavBtn.classList.contains('nav__link--active')) {
+    return;
+  }
+  const ids = getLocalStorage();
+
+  const products = await Promise.all(ids.map(id => getProductInModal(id)));
+  renderProducts(products);
+  reTextOrederItemsCount();
+  reTextTotalPrice();
+}
+
+function reTextOrederItemsCount() {
+  if (!refs.cartOrederInfoItemsCount) {
+    return;
+  }
+  refs.cartOrederInfoItemsCount.textContent = getLocalStorage().length;
+}
+
+function reTextTotalPrice() {
+  if (!refs.cartOrderInfoTotalPrice) {
+    return;
+  }
+  const cart = getLocalStorage();
+
+  let sum = 0;
+  const products = document.querySelectorAll('.products__item');
+  for (let product of products) {
+    if (cart.includes(product.dataset.id)) {
+      const sumToAdd =
+        product.querySelector('.products__price').textContent.split(' ')[1] *
+        100;
+      sum = (sum * 100 + sumToAdd) / 100;
+    }
+  }
+
+  refs.cartOrderInfoTotalPrice.textContent = `$${sum}`;
+}
+
+//Логіка сторінки Wishlist
+export async function handlerWishlistBtn() {
+  const id = refs.modalProduct.dataset.id;
+
+  if (getLocalStorageWishlist().includes(id)) {
+    removeLocalStorageWishlist(id);
+    refs.wishlistBtn.textContent = 'Add to Wishlist';
+  } else {
+    addLocalStorageWishlist(id);
+    refs.wishlistBtn.textContent = 'Remove from Wishlist';
+  }
+  refs.wishlistCount.textContent = getLocalStorageWishlist().length;
+}
+
+export async function initWishlist() {
+  if (!refs.wishlistNavBtn.classList.contains('nav__link--active')) {
+    return;
+  }
+  const ids = getLocalStorageWishlist();
+  const products = await Promise.all(ids.map(id => getProductInModal(id)));
+  renderProducts(products);
+}
+
+export function handlerBtnBuy() {
+  showToast('Ви придбали товари', 'success');
 }
