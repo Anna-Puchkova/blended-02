@@ -1,20 +1,33 @@
-import { refs } from './js/refs';
 import {
-  addLocalStorage,
+  clearSearch,
+  handleCategory,
+  handlerBtnBuy,
+  handlerCartBtn,
+  handlerForm,
+  handlerLoadMore,
+  handlerModal,
+  handlerWishlistBtn,
+  initCart,
+  initHomePage,
+} from './js/handlers';
+import { closeModal } from './js/modal';
+import { getProductInModal } from './js/products-api';
+import { refs } from './js/refs';
+import { renderProducts } from './js/render-function';
+import {
+  addLocalStorageWishlist,
   getLocalStorage,
-  removeLocalStorage,
+  getLocalStorageWishlist,
+  initStorage,
+  initStorageWishlist,
+  removeLocalStorageWishlist,
 } from './js/storage';
 
-//Логіка сторінки Cart
-export async function handlerCartBtn() {
-  const id = refs.modalProduct.dataset.id;
-
-  if (getLocalStorage().includes(id)) {
-    removeLocalStorage(id);
-    refs.cartBtn.textContent = 'Add to cart';
-  } else {
-    addLocalStorage(id);
-    refs.cartBtn.textContent = 'Remove from Cart';
-  }
-  refs.cartCount.textContent = getLocalStorage().length;
-}
+initCart();
+refs.products.addEventListener('click', handlerModal);
+initStorage();
+refs.modal.addEventListener('click', closeModal);
+refs.cartBtn.addEventListener('click', handlerCartBtn);
+refs.wishlistBtn.addEventListener('click', handlerWishlistBtn);
+initStorageWishlist();
+refs.modalBtnBuyAll.addEventListener('click', handlerBtnBuy);

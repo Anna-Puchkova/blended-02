@@ -1,8 +1,9 @@
-import iziToast from "izitoast";
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
 export function showToast(message, type = 'success') {
   const options = {
     message,
-    position: 'topRight',
+    position: 'bottomRight',
     timeout: 5000,
   };
 

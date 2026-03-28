@@ -1,17 +1,18 @@
 //Логіка сторінки Home
-import { handlerCartBtn } from './cart';
 import {
   clearSearch,
   handleCategory,
+  handlerCartBtn,
   handlerForm,
   handlerLoadMore,
   handlerModal,
+  handlerWishlistBtn,
   initHomePage,
+  handlerBtnBuy,
 } from './js/handlers';
 import { closeModal } from './js/modal';
 import { refs } from './js/refs';
 import { initStorage, initStorageWishlist } from './js/storage';
-import { handlerWishlistBtn } from './wishlist';
 
 document.addEventListener('DOMContentLoaded', initHomePage);
 refs.loadMoreBtn.addEventListener('click', handlerLoadMore);

@@ -10,8 +10,16 @@ export const refs = {
   form: document.querySelector('.search-form'),
   searchCloseButton: document.querySelector('.search-form__btn-clear'),
   cartBtn: document.querySelector('.modal-product__btn--cart'),
+  wishlistBtn: document.querySelector('.modal-product__btn--wishlist'),
   cartCount: document.querySelector('[data-cart-count]'),
   wishlistCount: document.querySelector('[data-wishlist-count]'),
-  wishlistBtn: document.querySelector('.modal-product__btn--wishlist'),
+  cartNavBtn: document.querySelector('.nav__link[href="./cart.html"]'),
   wishlistNavBtn: document.querySelector('.nav__link[href="./wishlist.html"]'),
+  cartOrederInfoItemsCount: document.querySelector(
+    '.cart-summary__value[data-count]'
+  ),
+  cartOrderInfoTotalPrice: document.querySelector(
+    '.cart-summary__value[data-price]'
+  ),
+  modalBtnBuyAll: document.querySelector('.cart-summary__btn'),
 };
